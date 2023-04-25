@@ -1,4 +1,5 @@
 # Unit Testing of AWS lambda functions (Node.js) using Mocha and Chai
+# SAM CLI Based Deployment
 
 ## Quick Guide
 
