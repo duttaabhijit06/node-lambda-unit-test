@@ -1,5 +1,5 @@
-const data = require("../dataService/data");
-const utils = require("../utils/utils");
+const data = require("./data");
+const utils = require("./utils");
 
 exports.handler = async (event, context) => {
   return await lambdaFunction(event, context);
@@ -18,9 +18,17 @@ using the command `npm run start`
 async function lambdaFunction(event, context) {
   const response = {};
   try {
-    let requestBody = event.body;
+    console.log(event.body)
+    let requestBody = null;
+    if (isJsonString(event.body)) {
+      requestBody = JSON.parse(event.body);
+    } else {
+      requestBody = event.body;
+    }
+    console.log(requestBody)
     let { searchText, filterBy } = requestBody;
-
+    console.log(searchText)
+    console.log(filterBy)
     /* Validate the required request params */
     if (
       !utils.isValidateInput(searchText) ||
@@ -33,21 +41,22 @@ async function lambdaFunction(event, context) {
     const searchResult = await fetchSearchResult(searchText, filterBy);
 
     if (searchResult && searchResult.length > 0) {
-      response.data = searchResult;
-      response.message = "Results fetched!";
+      response.body = JSON.stringify(searchResult);
+      // response.message = "Results fetched!";
     } else {
-      response.data = searchResult || [];
-      response.message = "No results found";
+      response.body = JSON.stringify(searchResult || []);
+      // response.message = "No results found";
     }
-    response.code = 200;
+    response.statusCode = 200;
 
-    // console.log("response:", response);
+    console.log("response:", response);
     return response;
   } catch (error) {
-    response.code = 400;
+    console.log(error)
+    response.statusCode = 400;
 
     if (error) {
-      response.ErrorMessages = [error.message];
+      response.body = JSON.stringify([error.message]);
     }
 
     return response;
@@ -70,4 +79,13 @@ async function fetchSearchResult(searchText, filterBy) {
   } catch (e) {
     throw e;
   }
+}
+
+function isJsonString(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
 }
