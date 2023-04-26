@@ -5,7 +5,7 @@ const proxyquire = require("proxyquire");
 const lambdaTester = require("lambda-tester");
 
 // Internal dependencies
-const utils = require("../src/utils/utils");
+const utils = require("../src/lambda/utils");
 
 // Import mock function from mock.js
 const { mockDBfunction, validInput, invalidInput } = require("./mock");
@@ -21,8 +21,8 @@ describe("FetchSearchResult Lambda Unit Test", function () {
     // Exporting the lambda with mock dependencies
     lambda = proxyquire.noCallThru().load("../src/lambda/app.js", {
       // Replacing the dependencies present inside lambda function (app.js) with mock functions
-      "../dataService/data": dataStub,
-      "../utils/utils": utils,
+      "./data": dataStub,
+      "./utils": utils,
     });
   });
 
@@ -52,16 +52,16 @@ describe("FetchSearchResult Lambda Unit Test", function () {
         .event(mockData) // Passing input data
         .expectResult((result) => {
           // Check if code exist
-          expect(result.code).to.exist;
+          expect(result.statusCode).to.exist;
 
           // Check if code =200
-          expect(result.code).to.equal(200);
+          expect(result.statusCode).to.equal(200);
 
           // Check if data exist
-          expect(result.data).to.exist;
+          expect(JSON.parse(result.body)).to.exist;
 
           // Check if data is an array
-          expect(result.data).to.be.a("array");
+          expect(JSON.parse(result.body)).to.be.a("array");
 
           done();
         })
@@ -73,16 +73,16 @@ describe("FetchSearchResult Lambda Unit Test", function () {
         .event(mockData)
         .expectResult((result) => {
           // Check if data is an array
-          expect(result.data).to.be.a("array");
+          expect(JSON.parse(result.body)).to.be.a("array");
 
           // Check if data[0] is an object
-          expect(result.data[0]).to.be.a("object");
+          expect(JSON.parse(result.body)[0]).to.be.a("object");
 
           // Check if data[0] has keyword property
-          expect(result.data[0]).to.have.own.property("keyword");
+          expect(JSON.parse(result.body)[0]).to.have.own.property("keyword");
 
           // Check if data[0] has departmentId property
-          expect(result.data[0]).to.have.own.property("departmentId");
+          expect(JSON.parse(result.body)[0]).to.have.own.property("departmentId");
 
           done();
         })
@@ -110,16 +110,16 @@ describe("FetchSearchResult Lambda Unit Test", function () {
         .event(mockData)
         .expectResult((result) => {
           // Check if code exist
-          expect(result.code).to.exist;
+          expect(result.statusCode).to.exist;
 
           // Check if code = 400
-          expect(result.code).to.equal(400);
+          expect(result.statusCode).to.equal(400);
 
           // Check if ErrorMessages exist
-          expect(result.ErrorMessages).to.exist;
+          expect(result.body).to.exist;
 
           // Check if ErrorMessages = `Invalid request body`
-          expect(result.ErrorMessages[0]).to.equal("Invalid request body");
+          expect(JSON.parse(result.body)[0]).to.equal("Invalid request body");
 
           done();
         })
@@ -135,16 +135,16 @@ describe("FetchSearchResult Lambda Unit Test", function () {
         .event(mockData)
         .expectResult((result) => {
           // Check if code exist
-          expect(result.code).to.exist;
+          expect(result.statusCode).to.exist;
 
           // Check if code = 400
-          expect(result.code).to.equal(400);
+          expect(result.statusCode).to.equal(400);
 
           // Check if ErrorMessages exist
-          expect(result.ErrorMessages).to.exist;
+          expect(result.body).to.exist;
 
           // Check if ErrorMessages = `Invalid request body`
-          expect(result.ErrorMessages[0]).to.equal("Invalid request body");
+          expect(JSON.parse(result.body)[0]).to.equal("Invalid request body");
 
           done();
         })
@@ -160,16 +160,16 @@ describe("FetchSearchResult Lambda Unit Test", function () {
         .event(mockData)
         .expectResult((result) => {
           // Check if code exist
-          expect(result.code).to.exist;
+          expect(result.statusCode).to.exist;
 
           // Check if code = 400
-          expect(result.code).to.equal(400);
+          expect(result.statusCode).to.equal(400);
 
           // Check if ErrorMessages exist
-          expect(result.ErrorMessages).to.exist;
+          expect(result.body).to.exist;
 
           // Check if ErrorMessages = `Invalid request body`
-          expect(result.ErrorMessages[0]).to.equal("Invalid request body");
+          expect(JSON.parse(result.body)[0]).to.equal("Invalid request body");
 
           done();
         })
@@ -201,10 +201,10 @@ describe("FetchSearchResult Lambda Unit Test", function () {
         .event(mockData)
         .expectResult((result) => {
           // Check if code exist
-          expect(result.code).to.exist;
+          expect(result.statusCode).to.exist;
 
           // Check if code = 400
-          expect(result.code).to.equal(400);
+          expect(result.statusCode).to.equal(400);
 
           done();
         })
@@ -241,16 +241,16 @@ describe("FetchSearchResult Lambda Unit Test", function () {
         .event(mockData)
         .expectResult((result) => {
           // Check if code exist
-          expect(result.code).to.exist;
+          expect(result.statusCode).to.exist;
 
           // Check if code =200
-          expect(result.code).to.equal(200);
+          expect(result.statusCode).to.equal(200);
 
           // Check if data exist
-          expect(result.data).to.exist;
+          expect(result.body).to.exist;
 
           // Check if data is an array
-          expect(result.data).to.be.a("array");
+          expect(JSON.parse(result.body)).to.be.a("array");
 
           done();
         })
