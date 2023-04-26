@@ -1,0 +1,44 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: node-lambda-unit-test
+    Description: AWS Serverless - AWS Lambda Test Demonstration
+    Author: Abhijit Dutta
+    Labels: ['lambda', 'test', 'apigw']
+
+Resources:
+
+  NodeLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/lambda
+      Handler: app.handler
+      Runtime: nodejs18.x
+      MemorySize: 256
+      Architectures:
+      - arm64
+      ReservedConcurrentExecutions: 1
+      Events:
+        HttpPost:
+          Type: Api
+          Properties:
+            Path: '/NodeLambda'
+            Method: post
+    Metadata:
+      SamResourceId: NodeLambda
+
+Outputs:
+  oLambdaFunction:
+    Description: AWS Lambda Function
+    Value:
+      Ref: NodeLambda
+  oAPIEndpoint:
+    Description: API URL endpoint for triggering the sample document creation service.
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/NodeLambda"
+
